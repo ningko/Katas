@@ -27,7 +27,10 @@ public class Game {
                 break;
             } else {
                 totalScore += frame.firstRoll + frame.secondRoll;
-                // TODO: add spare bonus if previous frame is spare and current positions is not 0
+            }
+            // TODO: add spare bonus if previous frame is spare and current position is not 0
+            if ((frame.firstRoll + frame.secondRoll == 10) && (currentPosition != 0)) {
+                totalScore += frame.firstRoll;
             }
         }
         return totalScore;
