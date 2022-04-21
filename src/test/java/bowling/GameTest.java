@@ -46,5 +46,20 @@ class GameTest {
 
         assertEquals(expectedScore, actualScore);
     }
+    @Test
+    public void strikeShouldCountBonus() {
+        var game = new Game();
+        game.roll(2);
+        game.roll(7);
+        game.roll(10); //strike
+        game.roll(4); //bonus
+        game.roll(3); //bonus
+
+
+        var expectedScore = 26;
+        var actualScore = game.score();
+
+        assertEquals(expectedScore, actualScore);
+    }
 }
 

@@ -14,6 +14,7 @@ public class Game {
           frame.secondRoll = pins;
           // set if it's a spare
           frame.isSpare = frame.firstRoll + frame.secondRoll == 10;
+          frame.isStrike = frame.secondRoll == 10;
           // set currentPosition to next available position
           currentPosition++;
       }
@@ -29,8 +30,10 @@ public class Game {
                 totalScore += frame.firstRoll + frame.secondRoll;
             }
             // TODO: add spare bonus if previous frame is spare and current position is not 0
-            if (frameList[currentPosition-1].isSpare && currentPosition != 0) {
+            if (i > 0 && frameList[i-1].isSpare) {
                 totalScore += frame.firstRoll;
+            } else if (i > 0 && frameList[i-1].isStrike) {
+                totalScore += frame.secondRoll;
             }
         }
         return totalScore;
