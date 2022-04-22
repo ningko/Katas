@@ -5,16 +5,20 @@ public class Game {
     int currentPosition = 0;
 
     void roll(int pins) {
-      var frame = frameList[currentPosition];
+      var currentFrame = frameList[currentPosition];
 
-      if (frame == null) {
+      if (currentFrame == null) {
           Frame newFrame = new Frame(pins);
           frameList[currentPosition] = newFrame;
+          // set if it's a strike
+          newFrame.isStrike = newFrame.firstRoll == 10;
+          if (newFrame.isStrike) {
+              currentPosition++;
+          }
       } else {
-          frame.secondRoll = pins;
+          currentFrame.secondRoll = pins;
           // set if it's a spare
-          frame.isSpare = frame.firstRoll + frame.secondRoll == 10;
-          frame.isStrike = frame.secondRoll == 10;
+          currentFrame.isSpare = currentFrame.firstRoll + currentFrame.secondRoll == 10;
           // set currentPosition to next available position
           currentPosition++;
       }
@@ -29,13 +33,39 @@ public class Game {
             } else {
                 totalScore += frame.firstRoll + frame.secondRoll;
             }
-            // TODO: add spare bonus if previous frame is spare and current position is not 0
-            if (i > 0 && frameList[i-1].isSpare) {
+            if (isSpare(i)) {
                 totalScore += frame.firstRoll;
-            } else if (i > 0 && frameList[i-1].isStrike) {
-                totalScore += frame.secondRoll;
+            } else {
+                totalScore += calculateStrikeBonus(i);
             }
         }
         return totalScore;
+    }
+
+    private int calculateStrikeBonus(int currentPosition) {
+        int bonus = 0;
+        if (frameList[currentPosition].isStrike) {
+            var nextFrame = frameList[currentPosition + 1];
+            if (nextFrame == null) {
+                return bonus;
+            }
+            // case 1: next frame is not a strike
+            if (!nextFrame.isStrike) {
+                bonus += nextFrame.firstRoll + nextFrame.secondRoll;
+            } else {
+                // case 2: next frame is a strike
+                bonus += 10;
+                var nextNextFrame = frameList[currentPosition + 2];
+                if (nextNextFrame == null) {
+                    return bonus;
+                }
+                bonus += nextNextFrame.firstRoll;
+            }
+        }
+        return bonus;
+    }
+
+    private boolean isSpare(int position) {
+        return position > 0 && frameList[position - 1].isSpare;
     }
 }
