@@ -30,12 +30,13 @@ public class Game {
             var frame = frameList[i];
             if (frame == null) {
                 break;
-            } else {
-                totalScore += frame.firstRoll + frame.secondRoll;
             }
+
+            totalScore += frame.firstRoll + frame.secondRoll;
+
             if (isSpare(i)) {
                 totalScore += frame.firstRoll;
-            } else {
+            } else if (isStrike(i)) {
                 totalScore += calculateStrikeBonus(i);
             }
         }
@@ -44,28 +45,30 @@ public class Game {
 
     private int calculateStrikeBonus(int currentPosition) {
         int bonus = 0;
-        if (frameList[currentPosition].isStrike) {
-            var nextFrame = frameList[currentPosition + 1];
-            if (nextFrame == null) {
+        var nextFrame = frameList[currentPosition + 1];
+        if (nextFrame == null) {
+            return bonus;
+        }
+        // case 1: next frame is not a strike
+        if (!nextFrame.isStrike) {
+            bonus += nextFrame.firstRoll + nextFrame.secondRoll;
+        } else {
+            // case 2: next frame is a strike
+            bonus += 10;
+            var nextNextFrame = frameList[currentPosition + 2];
+            if (nextNextFrame == null) {
                 return bonus;
             }
-            // case 1: next frame is not a strike
-            if (!nextFrame.isStrike) {
-                bonus += nextFrame.firstRoll + nextFrame.secondRoll;
-            } else {
-                // case 2: next frame is a strike
-                bonus += 10;
-                var nextNextFrame = frameList[currentPosition + 2];
-                if (nextNextFrame == null) {
-                    return bonus;
-                }
-                bonus += nextNextFrame.firstRoll;
-            }
+            bonus += nextNextFrame.firstRoll;
         }
         return bonus;
     }
 
-    private boolean isSpare(int position) {
-        return position > 0 && frameList[position - 1].isSpare;
+    private boolean isStrike(int currentPosition) {
+        return frameList[currentPosition].isStrike;
+    }
+
+    private boolean isSpare(int cureentPosition) {
+        return cureentPosition > 0 && frameList[cureentPosition - 1].isSpare;
     }
 }
